@@ -1,0 +1,100 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 30,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "mingw-gcc-debug",
+      "displayName": "MinGW GCC Debug",
+      "description": "Debug build using GCC from Qt MinGW toolchain",
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceDir}/build/gcc/dbg",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/gcc.exe",
+        "CMAKE_CXX_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/g++.exe",
+        "CMAKE_MAKE_PROGRAM": "C:/Qt/Tools/mingw1310_64/bin/mingw32-make.exe",
+        "VULKAN_SDK": "C:/VulkanSDK/1.4.335.0",
+        "CMAKE_PREFIX_PATH": "C:/VulkanSDK/1.4.335.0"
+      },
+      "environment": {
+        "PATH": "C:/Qt/Tools/mingw1310_64/bin;C:/VulkanSDK/1.4.335.0/Bin;$penv{PATH}"
+      }
+    },
+    {
+      "name": "mingw-gcc-release",
+      "displayName": "MinGW GCC Release",
+      "description": "Release build using GCC from Qt MinGW toolchain",
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceDir}/build/gcc/rel",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_C_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/gcc.exe",
+        "CMAKE_CXX_COMPILER": "C:/Qt/Tools/mingw1310_64/bin/g++.exe",
+        "CMAKE_MAKE_PROGRAM": "C:/Qt/Tools/mingw1310_64/bin/mingw32-make.exe",
+        "VULKAN_SDK": "C:/VulkanSDK/1.4.335.0",
+        "CMAKE_PREFIX_PATH": "C:/VulkanSDK/1.4.335.0"
+      },
+      "environment": {
+        "PATH": "C:/Qt/Tools/mingw1310_64/bin;C:/VulkanSDK/1.4.335.0/Bin;$penv{PATH}"
+      }
+    },
+    {
+      "name": "mingw-clang-debug",
+      "displayName": "MinGW Clang Debug",
+      "description": "Debug build using Clang from Qt LLVM toolchain",
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceDir}/build/clang/dbg",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "C:/Qt/Tools/llvm-mingw1706_64/bin/clang.exe",
+        "CMAKE_CXX_COMPILER": "C:/Qt/Tools/llvm-mingw1706_64/bin/clang++.exe",
+        "CMAKE_MAKE_PROGRAM": "C:/Qt/Tools/llvm-mingw1706_64/bin/mingw32-make.exe",
+        "VULKAN_SDK": "C:/VulkanSDK/1.4.335.0",
+        "CMAKE_PREFIX_PATH": "C:/VulkanSDK/1.4.335.0"
+      },
+      "environment": {
+        "PATH": "C:/Qt/Tools/llvm-mingw1706_64/bin;C:/VulkanSDK/1.4.335.0/Bin;$penv{PATH}"
+      }
+    },
+    {
+      "name": "mingw-clang-release",
+      "displayName": "MinGW Clang Release",
+      "description": "Release build using Clang from Qt LLVM toolchain",
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceDir}/build/clang/rel",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_C_COMPILER": "C:/Qt/Tools/llvm-mingw1706_64/bin/clang.exe",
+        "CMAKE_CXX_COMPILER": "C:/Qt/Tools/llvm-mingw1706_64/bin/clang++.exe",
+        "CMAKE_MAKE_PROGRAM": "C:/Qt/Tools/mingw1706_64/bin/mingw32-make.exe",
+        "VULKAN_SDK": "C:/VulkanSDK/1.4.335.0",
+        "CMAKE_PREFIX_PATH": "C:/VulkanSDK/1.4.335.0"
+      },
+      "environment": {
+        "PATH": "C:/Qt/Tools/llvm-mingw1706_64/bin;C:/VulkanSDK/1.4.335.0/Bin;$penv{PATH}"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "mingw-gcc-debug",
+      "configurePreset": "mingw-gcc-debug"
+    },
+    {
+      "name": "mingw-gcc-release",
+      "configurePreset": "mingw-gcc-release"
+    },
+    {
+      "name": "mingw-clang-debug",
+      "configurePreset": "mingw-clang-debug"
+    },
+    {
+      "name": "mingw-clang-release",
+      "configurePreset": "mingw-clang-release"
+    }
+  ]
+}
