@@ -1,7 +1,7 @@
 ﻿# CMakeList.txt : CMake project for vulkan_guide, include source and define
 # project specific logic here.
 #
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.35)
 
 project ("vulkan_guide")
 
@@ -11,6 +11,13 @@ find_package(Vulkan REQUIRED)
 add_subdirectory(third_party)
 
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin")
+
+function(add_chapter_executable NAME)
+    add_executable(${NAME} ${ARGN})
+    set_property(TARGET ${NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY $<TARGET_FILE_DIR:${NAME}>)
+    target_include_directories(${NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+    target_link_libraries(${NAME} vkbootstrap vma glm tinyobjloader imgui stb_image Vulkan::Vulkan)
+endfunction()
 
 add_subdirectory(chapter-0)
 add_subdirectory(chapter-1)
