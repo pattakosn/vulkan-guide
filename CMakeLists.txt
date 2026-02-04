@@ -18,6 +18,7 @@ function(add_chapter_executable NAME)
     set_property(TARGET ${NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY $<TARGET_FILE_DIR:${NAME}>)
     target_include_directories(${NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
     target_link_libraries(${NAME} vkbootstrap vma glm tinyobjloader imgui stb_image Vulkan::Vulkan)
+    add_dependencies(${NAME} Shaders)
 endfunction()
 
 add_subdirectory(src)
