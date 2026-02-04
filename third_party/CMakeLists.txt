@@ -11,6 +11,9 @@ add_library(tinyobjloader STATIC)
 target_sources(vkbootstrap PRIVATE 
     vkbootstrap/VkBootstrap.h
     vkbootstrap/VkBootstrap.cpp
+    vkbootstrap/VkBootstrapDispatch.h
+    vkbootstrap/VkBootstrapFeatureChain.h
+    vkbootstrap/VkBootstrapFeatureChain.inl
     )
 
 target_include_directories(vkbootstrap PUBLIC vkbootstrap)
