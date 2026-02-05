@@ -30,10 +30,16 @@ target_sources(tinyobjloader PRIVATE
 
 target_include_directories(tinyobjloader PUBLIC tinyobjloader)
 
-set(SDL2_DIR "C:/VulkanSDK/1.4.335.0/cmake" CACHE PATH "Path to SDL2Config.cmake")
-#or list(APPEND CMAKE_PREFIX_PATH "C:/VulkanSDK/1.4.335.0")
+if(NOT SDL2_DIR)
+    if(DEFINED ENV{SDL2_DIR})
+        set(SDL2_DIR "$ENV{SDL2_DIR}" CACHE PATH "Path to SDL2Config.cmake")
+    elseif(DEFINED ENV{VULKAN_SDK})
+        set(SDL2_DIR "$ENV{VULKAN_SDK}/cmake" CACHE PATH "Path to SDL2Config.cmake")
+    endif()
+endif()
 find_package(SDL2 CONFIG REQUIRED)
-message(STATUS "SDL2_FOUND = ${SDL2_FOUND} , SDL2_VERSION = ${SDL2_VERSION}, SDL2_DIR = ${SDL2_DIR}")
+message(STATUS "SDL2 VERSION = ${SDL2_VERSION_MAJOR}.${SDL2_VERSION_MINOR}.${SDL2_VERSION_PATCH} in dir = ${SDL2_DIR}")
+message(STATUS "SDL2_INCLUDE_DIRS = ${SDL2_INCLUDE_DIRS}, SDL2_LIBRARIES = ${SDL2_LIBRARIES}")
 
 add_library(imgui STATIC)
 
