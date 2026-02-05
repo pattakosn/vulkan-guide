@@ -5,7 +5,7 @@ cmake_minimum_required (VERSION 3.35)
 
 project ("vulkan_guide")
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 
 find_package(Vulkan REQUIRED)
 
@@ -20,6 +20,7 @@ function(add_chapter_executable NAME)
     target_link_libraries(${NAME} vkbootstrap vma glm tinyobjloader imgui stb_image Vulkan::Vulkan)
     add_dependencies(${NAME} Shaders)
 endfunction()
+
 
 add_subdirectory(src)
 
