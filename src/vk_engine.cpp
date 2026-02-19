@@ -39,19 +39,21 @@ void VulkanEngine::cleanup()
 	if (_isInitialized) {
 		vkDeviceWaitIdle(_device);
 
+		// Free per-frame command buffers, then destroy per-frame sync and command pools
 		for (int i = 0; i < FRAME_OVERLAP; i++) {
-			//already written from before
-			vkDestroyCommandPool(_device, _frames[i]._commandPool, nullptr);
-			//destroy sync objects
+			// explicitly free command buffers before destroying their command pools
+			vkFreeCommandBuffers(_device, _frames[i]._commandPool, 1, &_frames[i]._mainCommandBuffer);
+			// destroy sync objects
 			vkDestroyFence(_device, _frames[i]._renderFence, nullptr);
 			vkDestroySemaphore(_device, _frames[i]._renderSemaphore, nullptr);
-			vkDestroySemaphore(_device ,_frames[i]._swapchainSemaphore, nullptr);
+			vkDestroySemaphore(_device, _frames[i]._swapchainSemaphore, nullptr);
+			// destroy the command pool
+			vkDestroyCommandPool(_device, _frames[i]._commandPool, nullptr);
 		}
 
-		for (int i = 0; i < FRAME_OVERLAP; i++) {
-		    //explicitelly freeing commandBuffers even though it would be done automatically by destroying the associated command pools
-			vkFreeCommandBuffers(_device, _frames[i]._commandPool, 1, &_frames[i]._mainCommandBuffer);
-			vkDestroyCommandPool(_device, _frames[i]._commandPool, nullptr);
+		// destroy per-swapchain-image semaphores
+		for (size_t i = 0; i < _renderFinishedSemaphores.size(); i++) {
+			vkDestroySemaphore(_device, _renderFinishedSemaphores[i], nullptr);
 		}
 
 		destroy_swapchain();
@@ -118,9 +120,11 @@ void VulkanEngine::draw()
 	VkCommandBufferSubmitInfo cmdinfo = vkinit::command_buffer_submit_info(cmd);	
 	
 	VkSemaphoreSubmitInfo waitInfo = vkinit::semaphore_submit_info(VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT_KHR,get_current_frame()._swapchainSemaphore);
-	VkSemaphoreSubmitInfo signalInfo = vkinit::semaphore_submit_info(VK_PIPELINE_STAGE_2_ALL_GRAPHICS_BIT, get_current_frame()._renderSemaphore);	
-	
-	VkSubmitInfo2 submit = vkinit::submit_info(&cmdinfo,&signalInfo,&waitInfo);	
+	// Signal the semaphore associated with the acquired swapchain image to avoid reuse
+	VkSemaphore renderFinished = _renderFinishedSemaphores[swapchainImageIndex];
+	VkSemaphoreSubmitInfo signalInfo = vkinit::semaphore_submit_info(VK_PIPELINE_STAGE_2_ALL_GRAPHICS_BIT, renderFinished);    
+
+	VkSubmitInfo2 submit = vkinit::submit_info(&cmdinfo,&signalInfo,&waitInfo);    
 
 	//submit command buffer to the queue and execute it.
 	// _renderFence will now block until the graphic commands finish execution
@@ -136,7 +140,8 @@ void VulkanEngine::draw()
 	presentInfo.pSwapchains = &_swapchain;
 	presentInfo.swapchainCount = 1;
 
-	presentInfo.pWaitSemaphores = &get_current_frame()._renderSemaphore;
+	// Wait on the per-image render-finished semaphore
+	presentInfo.pWaitSemaphores = &renderFinished;
 	presentInfo.waitSemaphoreCount = 1;
 
 	presentInfo.pImageIndices = &swapchainImageIndex;
@@ -286,7 +291,14 @@ void VulkanEngine::init_sync_structures()
 
 		VK_CHECK(vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_frames[i]._swapchainSemaphore));
 		VK_CHECK(vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_frames[i]._renderSemaphore));
-	}}
+	}
+
+	// create one render-finished semaphore per swapchain image to avoid semaphore reuse
+	_renderFinishedSemaphores.clear();
+	_renderFinishedSemaphores.resize(_swapchainImages.size());
+	for (size_t i = 0; i < _renderFinishedSemaphores.size(); ++i)
+		VK_CHECK(vkCreateSemaphore(_device, &semaphoreCreateInfo, nullptr, &_renderFinishedSemaphores[i]));
+}
 
 void VulkanEngine::destroy_swapchain()
 {

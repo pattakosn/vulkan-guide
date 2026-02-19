@@ -39,6 +39,9 @@ public:
 	std::vector<VkImageView> _swapchainImageViews;
 	VkExtent2D _swapchainExtent;
 
+	// one semaphore per swapchain image to avoid reuse validation errors
+	std::vector<VkSemaphore> _renderFinishedSemaphores;
+
 
 	FrameData _frames[FRAME_OVERLAP];
 	FrameData& get_current_frame() { return _frames[_frameNumber % FRAME_OVERLAP]; };
