@@ -30,7 +30,15 @@
 do {                                                                              \
     VkResult err = x;                                                             \
     if (err) {                                                                    \
-        std::println(stderr, "Detected Vulkan error: {}", string_VkResult(err)); \
+        std::println(stderr, "Detected Vulkan error: {}", string_VkResult(err));  \
         abort();                                                                  \
     }                                                                             \
 } while (0)
+
+struct AllocatedImage {
+    VkImage image;
+    VkImageView imageView;
+    VmaAllocation allocation;
+    VkExtent3D imageExtent;
+    VkFormat imageFormat;
+};

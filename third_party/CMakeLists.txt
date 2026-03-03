@@ -2,7 +2,7 @@ find_package(Vulkan REQUIRED)
 
 add_library(vkbootstrap STATIC)
 add_library(glm INTERFACE)
-add_library(vma INTERFACE)
+add_library(vma STATIC)
 
 add_library(stb_image INTERFACE)
 
@@ -19,8 +19,15 @@ target_sources(vkbootstrap PRIVATE
 target_include_directories(vkbootstrap PUBLIC vkbootstrap)
 target_link_libraries(vkbootstrap PUBLIC Vulkan::Vulkan $<$<BOOL:UNIX>:${CMAKE_DL_LIBS}>)
 
-#both vma and glm and header only libs so we only need the include path
-target_include_directories(vma INTERFACE vma)
+target_sources(vma PRIVATE vma/vma_impl.cpp)
+target_include_directories(vma SYSTEM PUBLIC vma)
+target_link_libraries(vma PUBLIC Vulkan::Vulkan)
+if(MSVC)
+    target_compile_options(vma PRIVATE /w)
+else()
+    target_compile_options(vma PRIVATE -w)
+endif()
+
 target_include_directories(glm INTERFACE glm)
 
 target_sources(tinyobjloader PRIVATE 
