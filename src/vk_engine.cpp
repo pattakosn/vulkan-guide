@@ -58,7 +58,7 @@ void VulkanEngine::init_background_pipelines()
 	
 	//layout code
 	VkShaderModule computeDrawShader;
-	std::string shaderPath = vkutil::find_shader("gradient.comp.spv");
+	std::string shaderPath = vkutil::find_shader("gradient.comp.spv");//sine-wave.comp.spv");
 	if (shaderPath.empty() || !vkutil::load_shader_module(shaderPath.c_str(), _device, &computeDrawShader))
 	{
 		std::cerr << "Error when building the compute shader \n";

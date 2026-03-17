@@ -1,0 +1,36 @@
+// GLSL version to use
+#version 460
+
+// size of a workgroup for compute
+layout (local_size_x = 16, local_size_y = 16) in;
+
+// descriptor bindings for the pipeline
+layout (rgba16f, set = 0, binding = 0) uniform image2D image;
+
+void main()
+{
+    ivec2 texelCoord = ivec2(gl_GlobalInvocationID.xy);
+	ivec2 size = imageSize(image);
+
+    if (texelCoord.x < size.x && texelCoord.y < size.y)
+    {
+        // Normalized coordinates [0, 1]
+        float u = float(texelCoord.x) / float(size.x);
+        float v = float(texelCoord.y) / float(size.y);
+
+        // Sine wave boundary between white (above) and blue (below)
+        float frequency = 4.0;   // number of wave cycles across the width
+        float amplitude = 0.15;  // how far the wave swings from center
+
+        float waveCenterY = 0.5 + amplitude * sin(u * frequency * 2.0 * 3.14159265);
+
+        // Smooth transition at the boundary (anti-aliased edge)
+        float edge = smoothstep(waveCenterY - 0.005, waveCenterY + 0.005, v);
+        vec4 white = vec4(1.0, 1.0, 1.0, 1.0);
+        vec4 blue = vec4(0.0, 0.2, 0.8, 1.0);
+        // v < waveCenterY → above → white; v > waveCenterY → below → blue
+        vec4 color = mix(white, blue, edge);
+
+        imageStore(image, texelCoord, color);
+    }
+}
