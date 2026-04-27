@@ -83,6 +83,14 @@ public:
 
 	VkPipeline _gradientPipeline;
 	VkPipelineLayout _gradientPipelineLayout;
+
+
+    // immediate submit structures
+    VkFence _immFence;
+    VkCommandBuffer _immCommandBuffer;
+    VkCommandPool _immCommandPool;
+	void immediate_submit(std::function<void(VkCommandBuffer cmd)>&& function);
+
 	// initializes everything in the engine
 	void init();
 
@@ -110,4 +118,6 @@ private:
 
 	void init_pipelines();
 	void init_background_pipelines();
+
+	void init_imgui();
 };
